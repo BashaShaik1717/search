@@ -55,7 +55,7 @@ Let's set up a search source for looking through the users on an instance. Since
 
 2. Click New on the upper-left. You will be brought to the sp_search_source form.
 
-  ![New Search Source](./assets/tutorial1/new_search_source_form.png)
+![New Search Source](./assets/tutorial1/new_search_source_form.png)
 
 3. Provide a name and an ID for your search source. The ID should be unique, and should not include any spaces or special characters. It's a bit like creating a variable in Javascript! We'll choose the following:
   * Name - **Users**
@@ -71,7 +71,7 @@ Let's set up a search source for looking through the users on an instance. Since
 
   Your form should now look something like this:
 
-  ![New Search Source - Completed](./assets/tutorial1/complete_search_source_form.png)
+![New Search Source - Completed](./assets/tutorial1/complete_search_source_form.png)
 
 6. Click the section titled Typeahead. Here, you can configure the behaviour of the typeahead for this search source, or disable it entirely. We will provide a glyph for the search, as well as a target page.
 * Typeahead glyph - **user**
