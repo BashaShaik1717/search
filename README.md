@@ -42,8 +42,6 @@ To change the order in which the default search sources show in the Search List,
 
 To remove the default search source behaviour altogether, either delete the property value or delete the value altogether.
 
-## Advanced Topics
-TO DO
 ___
 # Tutorials - Enough Talking, What Do I Do?
 Here are a couple of step-by-step guides on how to set up different types of search sources using real-world examples.
