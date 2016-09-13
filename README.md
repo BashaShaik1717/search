@@ -86,3 +86,71 @@ Let's set up a search source for looking through the users on an instance. Since
 And we're done! You will now see typeahead results for users in your system when typing in the main search bar on the index page, and you will see a new result group in the search result page.
 
 ![Completed User Search Source](./assets/tutorial1/completed_user_search_source.png)
+
+## Scenario - Searching Repositories in Github (Advanced)
+Here's something quite a bit meatier that isn't as simple as fetching records from a table - creating a Github search integration will involve writing some custom script and modifying the default template.
+
+1. In the platform UI, type "sp_search_source.list" into the navigator on the left. This should open the search source table in the main frame.
+
+2. Click New on the upper-left. You will be brought to the sp_search_source form.
+
+![New Search Source](./assets/tutorial1/new_search_source_form.png)
+
+3. Provide a name and an ID for your search source. The ID should be unique, and should not include any spaces or special characters. It's a bit like creating a variable in Javascript! We'll choose the following:
+  * Name - **Github**
+  * ID - **github**
+
+4. We'll skip the template for now and circle back to it in a later step. For now, jump down to the Data Source section and click the checkbox **Is Scripted Source**. Now, we can write in our data-fetch script. Your script should look something like this (I have left the auth details blank - be sure to fill this in yourself).
+
+**Data Fetch Script**
+``` javascript
+(function(query) {
+	var results = [];
+	/* Calculate your results here. */
+	var url = "https://api.github.com/search/repositories?q=" + encodeURI(query);
+	var ws = new GlideHTTPRequest(url);
+	ws.setBasicAuth("YOUR_USERNAME_HERE", "YOUR_PASSWORD_HERE");
+	var jsonOutput = ws.get();
+	if (jsonOutput) {
+		var response = new JSON().decode(jsonOutput.getBody());
+		results = response.items;
+		results.forEach(function(result) {
+			result.url = result.svn_url;
+			result.target = "_blank";
+			result.primary = result.full_name;
+		});
+	}
+
+	return results;
+})(query);
+```
+Very quickly, lets talk about what's happening in the forEach loop over the results. Here, we are taking each of our results from our search queries and adding three important values for our typeahead functionality - **url**, **target**, and **primary**. URL tells our typeahead result what URL to navigate to when an item is selected. Target specifies the frame target (If you want to open a new tab, set this to "\_blank". Otherwise, you don't need to set it at all). Primary is the value that appears in the search bar after an element has been selected.
+
+5. Now, we're going to write some custom HTML for our search field. Since the data we're showing is very different from showing data from a GlideRecord, we'll be doing a fair bit of customization.
+
+**Search Page Template**
+``` html
+<div>
+  <div class="pull-right">
+    <strong>{{item.language}}</strong>
+    <a ng-href="{{item.svn_url}}/stargazers" target="_blank" class="m-l-sm"><span class="fa fa-star m-r-xs"></span>{{item.stargazers_count}}</a>
+    <a ng-href="{{item.svn_url}}/network" target="_blank" class="m-l-sm"><span class="fa fa-code-fork m-r-xs"></span>{{item.forks}}</a>
+  </div>
+  <a ng-href="{{item.svn_url}}" target="_blank" class="h4 text-primary m-b-sm block">
+    <span ng-bind-html="highlight(item.full_name, data.q)"></span>
+  </a>
+  <p>{{item.description}}</p>
+  <p>Updated <sn-time-ago timestamp="item.updated_at"></sn-time-ago> ago</p>
+</div>
+```
+6. Now, we'll set up typeahead to work properly. Click into the Typeahead settings, and all you'll need to do here is enable it, and set the icon to the Github logo. Leave the page blank - since we're setting **url** in the data-fetch script, this is not needed.
+
+7. Click Submit on the form, and we're done with our search source! Now, we will need to create a relationship between our new search source and our portal (we'll use the default Service Portal).
+
+8. Navigate to our new Search Source record, and in the Related Lists on the bottom, click Edit.
+
+9. In the slush bucket, find the Service Portal entry in the list on the left and move it to the list on the right. Click Save.
+
+Now we're done! To see your search source in action, navigate over to your portal and search for the term javascript. You'll see your results in the typeahead dropdown, as well as in the search page. Nice work!
+
+![New Github Search Source](./assets/tutorial2/new_github_search_source.png)
