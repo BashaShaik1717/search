@@ -46,7 +46,7 @@ ___
 # Tutorials - Enough Talking, What Do I Do?
 Here are a couple of step-by-step guides on how to set up different types of search sources using real-world examples.
 
-## Scenario - Searching Users
+## Scenario - Searching Users (Simple)
 Let's set up a search source for looking through the users on an instance. Since this is a fairly simple use-case, we'll be able to do it without writing a line of code. We'll want to search entries in the sys_user table, but we'll want to filter it down to just active users.
 
 1. In the platform UI, type "sp_search_source.list" into the navigator on the left. This should open the search source table in the main frame.
